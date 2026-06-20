@@ -1,10 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import { useState, FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Eye, EyeOff, LoaderCircle, LockKeyhole, Mail } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  LoaderCircle,
+  LockKeyhole,
+  Mail,
+} from "lucide-react";
 
 import { loginAction } from "./actions";
 
@@ -14,20 +20,21 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
     if (loading) return;
 
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData(event.currentTarget);
 
     setLoading(true);
 
     try {
-      const res = await loginAction(formData);
+      const response = await loginAction(formData);
 
-      if (!res.success) {
+      if (!response.success) {
         toast.error("Login failed", {
-          description: res.error ?? "Invalid credentials",
+          description: response.error ?? "Invalid email or password.",
         });
         return;
       }
@@ -35,128 +42,238 @@ export default function LoginPage() {
       toast.success("Welcome back");
       router.replace("/dashboard");
     } catch {
-      toast.error("System error");
+      toast.error("System error", {
+        description: "Unable to sign in. Please try again.",
+      });
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <main className="relative min-h-svh w-full flex items-center justify-center bg-[#050d0a] px-4 overflow-hidden">
-
-      {/* GRID */}
+    <main className="relative isolate min-h-dvh w-full overflow-x-hidden bg-[#04100b] px-4 py-6 sm:px-6 sm:py-10">
+      {/* Grid background */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 opacity-[0.06]"
+        className="pointer-events-none absolute inset-0 opacity-[0.055]"
         style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.75) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.75) 1px, transparent 1px)",
+          backgroundImage: `
+            linear-gradient(rgba(255,255,255,0.7) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.7) 1px, transparent 1px)
+          `,
           backgroundSize: "44px 44px",
         }}
       />
 
-      {/* GLOW */}
-      <div className="absolute -top-40 -left-40 h-[520px] w-[520px] bg-emerald-500/20 blur-[120px]" />
-      <div className="absolute -bottom-40 -right-40 h-[520px] w-[520px] bg-green-400/10 blur-[140px]" />
+      {/* Background glow */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-40 -top-40 h-[420px] w-[420px] rounded-full bg-emerald-500/15 blur-[110px] sm:h-[560px] sm:w-[560px]"
+      />
 
-      {/* CENTER WRAPPER */}
-      <div className="relative z-10 w-full max-w-[440px]">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-48 -right-40 h-[420px] w-[420px] rounded-full bg-green-400/10 blur-[120px] sm:h-[560px] sm:w-[560px]"
+      />
 
-        {/* CARD */}
-        <div className="
-          rounded-3xl
-          border border-white/10
-          bg-white/5 backdrop-blur-2xl
-          shadow-[0_40px_120px_-50px_rgba(0,0,0,0.8)]
-          
-          p-5 sm:p-7
-          max-h-[90vh]
-          overflow-y-auto
-        ">
-
-          {/* HEADER */}
-          <div className="text-center mb-5 sm:mb-6">
-
-            {/* LOGO (FIXED SCALE) */}
-            <div className="
-              mx-auto mb-3
-              flex items-center justify-center
-              h-14 w-14 sm:h-16 sm:w-16
-              rounded-full
-              bg-white/10 border border-white/10
-            ">
+      {/* Centering container */}
+      <div className="relative z-10 mx-auto flex min-h-[calc(100dvh-3rem)] w-full max-w-[430px] items-center justify-center sm:min-h-[calc(100dvh-5rem)]">
+        {/* Login card */}
+        <section
+          aria-labelledby="login-heading"
+          className="
+            w-full
+            rounded-[26px]
+            border border-white/[0.10]
+            bg-[#12251d]/85
+            px-5 py-6
+            shadow-[0_30px_90px_-35px_rgba(0,0,0,0.95)]
+            backdrop-blur-xl
+            sm:rounded-[30px]
+            sm:px-8 sm:py-8
+          "
+        >
+          {/* Header */}
+          <header className="mb-6 text-center sm:mb-7">
+            <div
+              className="
+                mx-auto mb-4
+                flex h-14 w-14
+                items-center justify-center
+                rounded-full
+                border border-white/10
+                bg-white/[0.08]
+                shadow-[0_10px_35px_-15px_rgba(16,185,129,0.7)]
+                sm:h-16 sm:w-16
+              "
+            >
               <Image
                 src="/logo.jpg"
-                alt="logo"
+                alt="ANCOP logo"
                 width={44}
                 height={44}
-                className="rounded-full"
+                priority
+                className="h-10 w-10 rounded-full object-cover sm:h-11 sm:w-11"
               />
             </div>
 
-            <h1 className="text-white text-lg sm:text-xl font-semibold">
+            <h1
+              id="login-heading"
+              className="text-lg font-semibold leading-tight tracking-[-0.02em] text-white sm:text-xl"
+            >
               ANCOP Scholar Management System
             </h1>
 
-            <p className="text-white/50 text-xs sm:text-sm mt-2 leading-snug">
-              Simplifying scholarship management through centralized submissions,
-              tracking, and communication.
+            <p className="mx-auto mt-2 max-w-[340px] text-xs leading-relaxed text-white/50 sm:text-sm">
+              Simplifying scholarship management through centralized
+              submissions, tracking, and communication.
             </p>
-          </div>
+          </header>
 
-          {/* FORM */}
-          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+          {/* Form */}
+          <form className="space-y-3.5" onSubmit={handleSubmit}>
+            {/* Email */}
+            <div>
+              <label htmlFor="email" className="sr-only">
+                Email address
+              </label>
 
-            {/* EMAIL */}
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 w-4 h-4" />
+              <div className="relative">
+                <Mail
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-white/35"
+                />
 
-              <input
-                name="email"
-                type="email"
-                placeholder="Email address"
-                className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-white/40 outline-none focus:border-emerald-400"
-                required
-              />
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  autoCapitalize="none"
+                  spellCheck={false}
+                  placeholder="Email address"
+                  disabled={loading}
+                  required
+                  className="
+                    h-12 w-full rounded-2xl
+                    border border-white/10
+                    bg-white/[0.07]
+                    pl-11 pr-4
+                    text-base text-white
+                    outline-none
+                    transition
+                    placeholder:text-white/35
+                    hover:border-white/20
+                    focus:border-emerald-400/80
+                    focus:bg-white/[0.09]
+                    focus:ring-4 focus:ring-emerald-400/10
+                    disabled:cursor-not-allowed disabled:opacity-60
+                    sm:h-13 sm:text-sm
+                  "
+                />
+              </div>
             </div>
 
-            {/* PASSWORD */}
-            <div className="relative">
-              <LockKeyhole className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40 w-4 h-4" />
+            {/* Password */}
+            <div>
+              <label htmlFor="password" className="sr-only">
+                Password
+              </label>
 
-              <input
-                name="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                className="w-full pl-10 pr-10 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-white/40 outline-none focus:border-emerald-400"
-                required
-              />
+              <div className="relative">
+                <LockKeyhole
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-white/35"
+                />
 
-              <button
-                type="button"
-                onClick={() => setShowPassword((s) => !s)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50"
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  placeholder="Password"
+                  disabled={loading}
+                  required
+                  className="
+                    h-12 w-full rounded-2xl
+                    border border-white/10
+                    bg-white/[0.07]
+                    pl-11 pr-12
+                    text-base text-white
+                    outline-none
+                    transition
+                    placeholder:text-white/35
+                    hover:border-white/20
+                    focus:border-emerald-400/80
+                    focus:bg-white/[0.09]
+                    focus:ring-4 focus:ring-emerald-400/10
+                    disabled:cursor-not-allowed disabled:opacity-60
+                    sm:h-13 sm:text-sm
+                  "
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((current) => !current)}
+                  disabled={loading}
+                  aria-label={
+                    showPassword ? "Hide password" : "Show password"
+                  }
+                  aria-pressed={showPassword}
+                  className="
+                    absolute right-2 top-1/2
+                    flex h-9 w-9 -translate-y-1/2
+                    items-center justify-center
+                    rounded-lg
+                    text-white/40
+                    transition
+                    hover:bg-white/[0.07]
+                    hover:text-white/75
+                    focus-visible:outline-none
+                    focus-visible:ring-2
+                    focus-visible:ring-emerald-400
+                    disabled:cursor-not-allowed
+                  "
+                >
+                  {showPassword ? (
+                    <EyeOff aria-hidden="true" size={18} />
+                  ) : (
+                    <Eye aria-hidden="true" size={18} />
+                  )}
+                </button>
+              </div>
             </div>
 
-            {/* BUTTON */}
+            {/* Submit button */}
             <button
+              type="submit"
               disabled={loading}
               className="
-                w-full flex items-center justify-center gap-2
-                py-3 rounded-xl
-                bg-emerald-500 hover:bg-emerald-600
-                text-white font-medium
+                flex h-12 w-full
+                items-center justify-center gap-2
+                rounded-2xl
+                bg-emerald-500
+                px-5
+                text-sm font-semibold text-white
+                shadow-[0_12px_35px_-14px_rgba(16,185,129,0.9)]
                 transition
+                hover:bg-emerald-400
+                focus-visible:outline-none
+                focus-visible:ring-4
+                focus-visible:ring-emerald-400/25
+                active:scale-[0.99]
+                disabled:cursor-not-allowed
                 disabled:opacity-60
               "
             >
               {loading ? (
                 <>
-                  <LoaderCircle className="animate-spin w-4 h-4" />
-                  Signing in
+                  <LoaderCircle
+                    aria-hidden="true"
+                    className="h-4 w-4 animate-spin"
+                  />
+                  <span>Signing in...</span>
                 </>
               ) : (
                 "Sign in"
@@ -164,11 +281,13 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* FOOTER */}
-          <p className="text-center text-white/30 text-[11px] sm:text-xs mt-5">
-            Authorized access only
-          </p>
-        </div>
+          {/* Footer */}
+          <footer className="mt-5 text-center">
+            <p className="text-[10px] text-white/30 sm:text-xs">
+              Authorized access only
+            </p>
+          </footer>
+        </section>
       </div>
     </main>
   );
