@@ -1,0 +1,235 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* =========================
+     ANCOP BRAND SYSTEM
+  ========================== */
+
+  --ancop-50: #f2fbf5;
+  --ancop-100: #dcf5e4;
+  --ancop-200: #bce9c9;
+  --ancop-300: #8fd8a6;
+  --ancop-400: #58bd78;
+  --ancop-500: #2f9c57;
+  --ancop-600: #258646;
+  --ancop-700: #1b6a37;
+  --ancop-800: #17552f;
+  --ancop-900: #123f25;
+  --ancop-950: #082718;
+
+  /* =========================
+     BASE UI TOKENS
+  ========================== */
+
+  --background: #f7fbf8;
+  --foreground: var(--ancop-950);
+
+  --card: #ffffff;
+  --card-foreground: var(--ancop-950);
+
+  --popover: #ffffff;
+  --popover-foreground: var(--ancop-950);
+
+  /* PRIMARY = ANCOP GREEN */
+  --primary: var(--ancop-600);
+  --primary-foreground: #ffffff;
+
+  --secondary: var(--ancop-50);
+  --secondary-foreground: var(--ancop-800);
+
+  --muted: #eef5f0;
+  --muted-foreground: #5f6f65;
+
+  --accent: var(--ancop-100);
+  --accent-foreground: var(--ancop-800);
+
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+
+  --border: #d7e6db;
+  --input: #d7e6db;
+  --ring: var(--ancop-500);
+
+  --radius: 0.85rem;
+
+  /* =========================
+     SIDEBAR SYSTEM (shadcn)
+  ========================== */
+
+  --sidebar: #f7fbf8;
+  --sidebar-foreground: var(--ancop-950);
+
+  --sidebar-primary: var(--ancop-600);
+  --sidebar-primary-foreground: #ffffff;
+
+  --sidebar-accent: var(--ancop-100);
+  --sidebar-accent-foreground: var(--ancop-800);
+
+  --sidebar-border: #d7e6db;
+  --sidebar-ring: var(--ancop-500);
+
+  /* =========================
+     CHART COLORS
+  ========================== */
+
+  --chart-1: var(--ancop-600);
+  --chart-2: var(--ancop-500);
+  --chart-3: var(--ancop-400);
+  --chart-4: var(--ancop-300);
+  --chart-5: var(--ancop-700);
+}
+
+/* =========================
+   DARK MODE
+========================== */
+
+.dark {
+  --background: #07140c;
+  --foreground: #eef8f1;
+
+  --card: #0e1e14;
+  --card-foreground: #eef8f1;
+
+  --popover: #0e1e14;
+  --popover-foreground: #eef8f1;
+
+  --primary: var(--ancop-400);
+  --primary-foreground: #06130a;
+
+  --secondary: #143020;
+  --secondary-foreground: #e2f4e7;
+
+  --muted: #13281b;
+  --muted-foreground: #a3b7aa;
+
+  --accent: #173c26;
+  --accent-foreground: #e2f4e7;
+
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
+  --border: #264231;
+  --input: #264231;
+  --ring: var(--ancop-400);
+
+  --sidebar: #0e1e14;
+  --sidebar-foreground: #eef8f1;
+  --sidebar-primary: var(--ancop-400);
+  --sidebar-primary-foreground: #06130a;
+  --sidebar-accent: #173c26;
+  --sidebar-accent-foreground: #e2f4e7;
+  --sidebar-border: #264231;
+  --sidebar-ring: var(--ancop-400);
+}
+
+/* =========================
+   TAILWIND THEME MAPPING
+========================== */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-ancop-50: var(--ancop-50);
+  --color-ancop-100: var(--ancop-100);
+  --color-ancop-200: var(--ancop-200);
+  --color-ancop-300: var(--ancop-300);
+  --color-ancop-400: var(--ancop-400);
+  --color-ancop-500: var(--ancop-500);
+  --color-ancop-600: var(--ancop-600);
+  --color-ancop-700: var(--ancop-700);
+  --color-ancop-800: var(--ancop-800);
+  --color-ancop-900: var(--ancop-900);
+  --color-ancop-950: var(--ancop-950);
+
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 3px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 6px);
+}
+
+/* =========================
+   BASE RESET
+========================== */
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans;
+    min-width: 320px;
+    background: var(--background);
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-height: 100dvh;
+    overflow-x: hidden;
+    background: var(--background);
+    color: var(--foreground);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  button:not(:disabled),
+  [role="button"] {
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--ancop-200);
+    color: var(--ancop-900);
+  }
+}

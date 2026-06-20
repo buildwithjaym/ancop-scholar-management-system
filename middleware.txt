@@ -1,0 +1,59 @@
+import { NextResponse, type NextRequest } from "next/server";
+import { createServerClient } from "@supabase/ssr";
+
+export async function middleware(req: NextRequest) {
+  let res = NextResponse.next();
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll: () => req.cookies.getAll(),
+        setAll: (cookies) => {
+          cookies.forEach(({ name, value, options }) => {
+            res.cookies.set(name, value, options);
+          });
+        },
+      },
+    }
+  );
+
+  // Get authenticated user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const path = req.nextUrl.pathname;
+
+  const isLoginRoute = path === "/login";
+  const isPublicAsset =
+    path.startsWith("/_next") ||
+    path.startsWith("/favicon.ico") ||
+    path.startsWith("/images") ||
+    path.startsWith("/public");
+
+  // Allow public assets
+  if (isPublicAsset) return res;
+
+  // CASE 1: Not logged in → force login
+  if (!user && !isLoginRoute) {
+    const url = req.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
+  }
+
+  // CASE 2: Logged in → prevent returning to login page
+  if (user && isLoginRoute) {
+    const url = req.nextUrl.clone();
+    url.pathname = "/";
+    return NextResponse.redirect(url);
+  }
+
+  return res;
+}
+
+// Apply middleware to all routes except static files
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+};
