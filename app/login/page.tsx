@@ -38,8 +38,31 @@ export default function LoginPage() {
         return;
       }
 
-      toast.success("Welcome, you've successfully login as Admin");
-      router.replace("/admin")
+      if (!response.success) {
+        toast.error("Login failed", {
+          description: response.error ?? "Invalid email or password.",
+        });
+        return;
+      }
+
+
+      if (response.mustChangePassword) {
+        toast.success("Password update required");
+        router.replace("/reset-password");
+        return;
+      }
+
+      if (response.role === "admin") {
+        toast.success("Welcome Admin");
+        router.replace("/admin");
+        return;
+      }
+
+      if (response.role === "scholar") {
+        toast.success("Welcome Scholar");
+        router.replace("/dashboard");
+        return;
+      }
     } catch {
       toast.error("System error", {
         description: "Unable to sign in. Please try again.",
@@ -139,7 +162,20 @@ export default function LoginPage() {
                 )}
               </button>
             </div>
-
+            <div className="flex items-center justify-end">
+              <button
+                type="button"
+                onClick={() =>
+                  toast.info("Coming soon", {
+                    description:
+                      "Password recovery feature is currently under development. Please contact admin if you need access immediately.",
+                  })
+                }
+                className="text-xs text-emerald-300/70 hover:text-emerald-200 transition"
+              >
+                Forgot password?
+              </button>
+            </div>
             {/* BUTTON */}
             <button
               type="submit"
