@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Sign In | Qorban Scholar Portal",
+  title: "Sign In | ANCOP Submission Portal",
   description:
-    "Secure access to the Qorban Scholar academic management portal.",
+    "Secure access to the ANCOP Scholar academic management portal.",
 };
 
 type LoginLayoutProps = Readonly<{

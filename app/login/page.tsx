@@ -26,7 +26,6 @@ export default function LoginPage() {
     if (loading) return;
 
     const formData = new FormData(event.currentTarget);
-
     setLoading(true);
 
     try {
@@ -51,229 +50,106 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="relative isolate min-h-dvh w-full overflow-x-hidden bg-[#04100b] px-4 py-6 sm:px-6 sm:py-10">
-      {/* Grid background */}
+    <main className="relative h-dvh w-full overflow-hidden bg-[#04100b] px-4">
+
+      {/* GRID */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-[0.055]"
+        className="pointer-events-none absolute inset-0 opacity-[0.06]"
         style={{
-          backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.7) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.7) 1px, transparent 1px)
-          `,
-          backgroundSize: "44px 44px",
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.7) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.7) 1px, transparent 1px)",
+          backgroundSize: "46px 46px",
         }}
       />
 
-      {/* Background glow */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-40 -top-40 h-[420px] w-[420px] rounded-full bg-emerald-500/15 blur-[110px] sm:h-[560px] sm:w-[560px]"
-      />
+      {/* GLOW */}
+      <div className="pointer-events-none absolute -left-20 -top-20 h-[420px] w-[420px] rounded-full bg-emerald-500/20 blur-[120px]" />
+      <div className="pointer-events-none absolute -bottom-32 -right-20 h-[420px] w-[420px] rounded-full bg-green-400/10 blur-[120px]" />
 
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -bottom-48 -right-40 h-[420px] w-[420px] rounded-full bg-green-400/10 blur-[120px] sm:h-[560px] sm:w-[560px]"
-      />
+      {/* CENTER */}
+      <div className="relative z-10 flex h-dvh items-center justify-center">
 
-      {/* Centering container */}
-      <div className="relative z-10 mx-auto flex min-h-[calc(100dvh-3rem)] w-full max-w-[430px] items-center justify-center sm:min-h-[calc(100dvh-5rem)]">
-        {/* Login card */}
-        <section
-          aria-labelledby="login-heading"
-          className="
-            w-full
-            rounded-[26px]
-            border border-white/[0.10]
-            bg-[#12251d]/85
-            px-5 py-6
-            shadow-[0_30px_90px_-35px_rgba(0,0,0,0.95)]
-            backdrop-blur-xl
-            sm:rounded-[30px]
-            sm:px-8 sm:py-8
-          "
-        >
-          {/* Header */}
-          <header className="mb-6 text-center sm:mb-7">
-            <div
-              className="
-                mx-auto mb-4
-                flex h-14 w-14
-                items-center justify-center
-                rounded-full
-                border border-white/10
-                bg-white/[0.08]
-                shadow-[0_10px_35px_-15px_rgba(16,185,129,0.7)]
-                sm:h-16 sm:w-16
-              "
-            >
+        {/* CARD (ENLARGED) */}
+        <section className="w-full max-w-[520px] rounded-3xl border border-white/10 bg-[#12251d]/90 px-8 py-10 shadow-2xl backdrop-blur-xl">
+
+          {/* HEADER */}
+          <header className="mb-8 text-center">
+
+            <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full border border-white/10 bg-white/10 shadow-lg">
               <Image
                 src="/logo.jpg"
-                alt="ANCOP logo"
-                width={44}
-                height={44}
-                priority
-                className="h-10 w-10 rounded-full object-cover sm:h-11 sm:w-11"
+                alt="Logo"
+                width={64}
+                height={64}
+                className="h-14 w-14 rounded-full object-cover"
               />
             </div>
 
-            <h1
-              id="login-heading"
-              className="text-lg font-semibold leading-tight tracking-[-0.02em] text-white sm:text-xl"
-            >
-              ANCOP Scholar Management System
+            <h1 className="text-2xl font-semibold text-white">
+              ANCOP Scholar System
             </h1>
 
-            <p className="mx-auto mt-2 max-w-[340px] text-xs leading-relaxed text-white/50 sm:text-sm">
-              Simplifying scholarship management through centralized
-              submissions, tracking, and communication.
+            <p className="mt-2 text-sm text-white/50">
+              Centralized scholarship management platform
             </p>
           </header>
 
-          {/* Form */}
-          <form className="space-y-3.5" onSubmit={handleSubmit}>
-            {/* Email */}
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
+          {/* FORM */}
+          <form onSubmit={handleSubmit} className="space-y-5">
 
-              <div className="relative">
-                <Mail
-                  aria-hidden="true"
-                  className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-white/35"
-                />
+            {/* EMAIL */}
+            <div className="relative flex h-14 items-center rounded-2xl border border-white/10 bg-white/5 px-4 focus-within:border-emerald-400/70 focus-within:ring-4 focus-within:ring-emerald-400/10">
 
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  inputMode="email"
-                  autoComplete="email"
-                  autoCapitalize="none"
-                  spellCheck={false}
-                  placeholder="Email address"
-                  disabled={loading}
-                  required
-                  className="
-                    h-12 w-full rounded-2xl
-                    border border-white/10
-                    bg-white/[0.07]
-                    pl-11 pr-4
-                    text-base text-white
-                    outline-none
-                    transition
-                    placeholder:text-white/35
-                    hover:border-white/20
-                    focus:border-emerald-400/80
-                    focus:bg-white/[0.09]
-                    focus:ring-4 focus:ring-emerald-400/10
-                    disabled:cursor-not-allowed disabled:opacity-60
-                    sm:h-13 sm:text-sm
-                  "
-                />
-              </div>
+              <Mail className="h-5 w-5 text-white/40" />
+
+              <input
+                name="email"
+                type="email"
+                placeholder="Email address"
+                disabled={loading}
+                required
+                className="w-full bg-transparent px-4 text-base text-white outline-none placeholder:text-white/40"
+              />
             </div>
 
-            {/* Password */}
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
+            {/* PASSWORD */}
+            <div className="relative flex h-14 items-center rounded-2xl border border-white/10 bg-white/5 px-4 focus-within:border-emerald-400/70 focus-within:ring-4 focus-within:ring-emerald-400/10">
 
-              <div className="relative">
-                <LockKeyhole
-                  aria-hidden="true"
-                  className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-white/35"
-                />
+              <LockKeyhole className="h-5 w-5 text-white/40" />
 
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  autoComplete="current-password"
-                  placeholder="Password"
-                  disabled={loading}
-                  required
-                  className="
-                    h-12 w-full rounded-2xl
-                    border border-white/10
-                    bg-white/[0.07]
-                    pl-11 pr-12
-                    text-base text-white
-                    outline-none
-                    transition
-                    placeholder:text-white/35
-                    hover:border-white/20
-                    focus:border-emerald-400/80
-                    focus:bg-white/[0.09]
-                    focus:ring-4 focus:ring-emerald-400/10
-                    disabled:cursor-not-allowed disabled:opacity-60
-                    sm:h-13 sm:text-sm
-                  "
-                />
+              <input
+                name="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                disabled={loading}
+                required
+                className="w-full bg-transparent px-4 text-base text-white outline-none placeholder:text-white/40"
+              />
 
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((current) => !current)}
-                  disabled={loading}
-                  aria-label={
-                    showPassword ? "Hide password" : "Show password"
-                  }
-                  aria-pressed={showPassword}
-                  className="
-                    absolute right-2 top-1/2
-                    flex h-9 w-9 -translate-y-1/2
-                    items-center justify-center
-                    rounded-lg
-                    text-white/40
-                    transition
-                    hover:bg-white/[0.07]
-                    hover:text-white/75
-                    focus-visible:outline-none
-                    focus-visible:ring-2
-                    focus-visible:ring-emerald-400
-                    disabled:cursor-not-allowed
-                  "
-                >
-                  {showPassword ? (
-                    <EyeOff aria-hidden="true" size={18} />
-                  ) : (
-                    <Eye aria-hidden="true" size={18} />
-                  )}
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => setShowPassword(v => !v)}
+                className="flex h-10 w-10 items-center justify-center rounded-lg text-white/50 hover:bg-white/10 hover:text-white"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
             </div>
 
-            {/* Submit button */}
+            {/* BUTTON */}
             <button
               type="submit"
               disabled={loading}
-              className="
-                flex h-12 w-full
-                items-center justify-center gap-2
-                rounded-2xl
-                bg-emerald-500
-                px-5
-                text-sm font-semibold text-white
-                shadow-[0_12px_35px_-14px_rgba(16,185,129,0.9)]
-                transition
-                hover:bg-emerald-400
-                focus-visible:outline-none
-                focus-visible:ring-4
-                focus-visible:ring-emerald-400/25
-                active:scale-[0.99]
-                disabled:cursor-not-allowed
-                disabled:opacity-60
-              "
+              className="flex h-14 w-full items-center justify-center gap-3 rounded-2xl bg-emerald-500 text-base font-semibold text-white transition hover:bg-emerald-400 disabled:opacity-60"
             >
               {loading ? (
                 <>
-                  <LoaderCircle
-                    aria-hidden="true"
-                    className="h-4 w-4 animate-spin"
-                  />
-                  <span>Signing in...</span>
+                  <LoaderCircle className="h-5 w-5 animate-spin" />
+                  Signing in...
                 </>
               ) : (
                 "Sign in"
@@ -281,12 +157,13 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Footer */}
-          <footer className="mt-5 text-center">
-            <p className="text-[10px] text-white/30 sm:text-xs">
+          {/* FOOTER */}
+          <footer className="mt-6 text-center">
+            <p className="text-xs text-white/30">
               Authorized access only
             </p>
           </footer>
+
         </section>
       </div>
     </main>
