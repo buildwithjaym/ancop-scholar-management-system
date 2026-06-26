@@ -38,8 +38,8 @@ export default function LoginPage() {
         return;
       }
 
-      toast.success("Welcome back");
-      router.replace("/dashboard");
+      toast.success("Welcome, you've successfully login as Admin");
+      router.replace("/admin")
     } catch {
       toast.error("System error", {
         description: "Unable to sign in. Please try again.",
@@ -76,7 +76,7 @@ export default function LoginPage() {
           {/* HEADER */}
           <header className="mb-8 text-center">
 
-            <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full border border-white/10 bg-white/10 shadow-lg">
+            <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full border border-white/10 bg-white/10 shadow-lg">
               <Image
                 src="/logo.jpg"
                 alt="Logo"
@@ -86,8 +86,8 @@ export default function LoginPage() {
               />
             </div>
 
-            <h1 className="text-2xl font-semibold text-white">
-              ANCOP Scholar System
+            <h1 className="text-2xl font-bold text-white">
+              ANCOP ScholarHub
             </h1>
 
             <p className="mt-2 text-sm text-white/50">
