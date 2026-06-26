@@ -15,15 +15,14 @@ type LoginResponse =
       error: string;
     };
 
-export async function loginAction(
-  formData: FormData
-): Promise<LoginResponse> {
+
+
+export async function loginAction(formData: FormData) {
   const email = String(formData.get("email"));
   const password = String(formData.get("password"));
 
   const supabase = await createClient();
 
-  
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
@@ -38,7 +37,6 @@ export async function loginAction(
 
   const userId = data.user.id;
 
- 
   const { data: profile, error: profileError } = await supabaseAdmin
     .from("profiles")
     .select("role, must_change_password")
@@ -52,10 +50,8 @@ export async function loginAction(
     };
   }
 
-
   return {
     success: true,
-    userId,
     role: profile.role,
     mustChangePassword: profile.must_change_password,
   };
