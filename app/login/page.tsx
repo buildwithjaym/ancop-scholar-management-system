@@ -60,7 +60,7 @@ export default function LoginPage() {
 
       if (response.role === "scholar") {
         toast.success("Welcome Scholar");
-        router.replace("/dashboard");
+        router.replace("/scholar");
         return;
       }
     } catch {
