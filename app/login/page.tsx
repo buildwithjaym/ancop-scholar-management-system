@@ -67,7 +67,7 @@ export default function LoginPage() {
 
       toast.dismiss(loadingToast);
 
-      // HARD FIX: RLS or missing profile
+      // RLS or missing profile
       if (profileError || !profile) {
         await supabase.auth.signOut();
         toast.error("Unable to read profile (RLS or missing data)");
