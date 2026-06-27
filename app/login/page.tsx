@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
@@ -11,61 +11,106 @@ import {
   LockKeyhole,
   Mail,
 } from "lucide-react";
-
-import { loginAction } from "./actions";
+import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const router = useRouter();
+  const supabase = createClient();
 
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
 
     if (loading) return;
 
-    const formData = new FormData(event.currentTarget);
+    const formData = new FormData(e.currentTarget);
+
+    const email = String(formData.get("email") || "")
+      .toLowerCase()
+      .trim();
+
+    const password = String(formData.get("password") || "")
+      .trim();
+
+    if (!email || !password) {
+      toast.error("Missing credentials");
+      return;
+    }
+
     setLoading(true);
 
-    try {
-      const response = await loginAction(formData);
+    const loadingToast = toast.loading("Signing you in...");
 
-      if (!response.success) {
-        toast.error("Login failed", {
-          description: response.error,
-        });
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error || !data.user) {
+        toast.dismiss(loadingToast);
+        toast.error("Login failed");
+        setLoading(false);
         return;
       }
 
-      if (response.mustChangePassword) {
-        toast.success("Password update required", {
-          description: "Please update your password before continuing.",
-        });
+      const userId = data.user.id;
 
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("id, role, is_active, must_change_password, full_name, avatar_url")
+        .eq("id", userId)
+        .limit(1)
+        .maybeSingle();
+
+      toast.dismiss(loadingToast);
+
+      // HARD FIX: RLS or missing profile
+      if (profileError || !profile) {
+        await supabase.auth.signOut();
+        toast.error("Unable to read profile (RLS or missing data)");
+        setLoading(false);
+        return;
+      }
+
+      // inactive account
+      if (!profile.is_active) {
+        await supabase.auth.signOut();
+        toast.error("Account inactive");
+        setLoading(false);
+        return;
+      }
+
+      // force password update
+      if (profile.must_change_password) {
+        toast.info("Password update required");
         router.replace("/reset-password");
         return;
       }
 
-      if (response.role === "admin") {
-        toast.success("Welcome Admin");
+      // WELCOME MESSAGE
+      toast.success(
+        `Welcome ${profile.full_name || "User"}`
+      );
+
+      // ROLE ROUTING
+      if (profile.role === "admin") {
         router.replace("/admin");
         return;
       }
 
-      if (response.role === "scholar") {
-        toast.success("Welcome Scholar");
+      if (profile.role === "scholar") {
         router.replace("/scholar");
         return;
       }
 
-      toast.error("Login failed", {
-        description: "Unknown account role.",
-      });
-    } catch {
-      toast.error("System error", {
-        description: "Unable to sign in. Please try again.",
-      });
+      await supabase.auth.signOut();
+      toast.error("Invalid role");
+
+    } catch (err) {
+      toast.error("Unexpected system error");
     } finally {
       setLoading(false);
     }
@@ -74,10 +119,7 @@ export default function LoginPage() {
   return (
     <main className="relative h-dvh w-full overflow-hidden bg-[#04100b] px-4">
 
-      {/* GRID */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-[0.06]"
+      <div className="pointer-events-none absolute inset-0 opacity-[0.06]"
         style={{
           backgroundImage:
             "linear-gradient(rgba(255,255,255,0.7) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.7) 1px, transparent 1px)",
@@ -85,27 +127,16 @@ export default function LoginPage() {
         }}
       />
 
-      {/* GLOW */}
       <div className="pointer-events-none absolute -left-20 -top-20 h-[420px] w-[420px] rounded-full bg-emerald-500/20 blur-[120px]" />
       <div className="pointer-events-none absolute -bottom-32 -right-20 h-[420px] w-[420px] rounded-full bg-green-400/10 blur-[120px]" />
 
-      {/* CENTER */}
       <div className="relative z-10 flex h-dvh items-center justify-center">
 
-        {/* CARD (ENLARGED) */}
         <section className="w-full max-w-[520px] rounded-3xl border border-white/10 bg-[#12251d]/90 px-8 py-10 shadow-2xl backdrop-blur-xl">
 
-          {/* HEADER */}
           <header className="mb-8 text-center">
-
-            <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full border border-white/10 bg-white/10 shadow-lg">
-              <Image
-                src="/logo.jpg"
-                alt="Logo"
-                width={64}
-                height={64}
-                className="h-14 w-14 rounded-full object-cover"
-              />
+            <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full border border-white/10 bg-white/10">
+              <Image src="/logo.jpg" alt="logo" width={64} height={64} className="rounded-full object-cover" />
             </div>
 
             <h1 className="text-2xl font-bold text-white">
@@ -113,86 +144,60 @@ export default function LoginPage() {
             </h1>
 
             <p className="mt-2 text-sm text-white/50">
-              Centralized scholarship management platform
+              Scholarship Command System
             </p>
           </header>
 
-          {/* FORM */}
           <form onSubmit={handleSubmit} className="space-y-5">
 
-            {/* EMAIL */}
-            <div className="relative flex h-14 items-center rounded-2xl border border-white/10 bg-white/5 px-4 focus-within:border-emerald-400/70 focus-within:ring-4 focus-within:ring-emerald-400/10">
-
+            <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 h-14">
               <Mail className="h-5 w-5 text-white/40" />
-
               <input
                 name="email"
                 type="email"
-                placeholder="Email address"
+                placeholder="Email"
+                className="w-full bg-transparent text-white outline-none"
                 disabled={loading}
-                required
-                className="w-full bg-transparent px-4 text-base text-white outline-none placeholder:text-white/40"
               />
             </div>
 
-            {/* PASSWORD */}
-            <div className="relative flex h-14 items-center rounded-2xl border border-white/10 bg-white/5 px-4 focus-within:border-emerald-400/70 focus-within:ring-4 focus-within:ring-emerald-400/10">
-
+            <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 h-14">
               <LockKeyhole className="h-5 w-5 text-white/40" />
 
               <input
                 name="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
+                className="w-full bg-transparent text-white outline-none"
                 disabled={loading}
-                required
-                className="w-full bg-transparent px-4 text-base text-white outline-none placeholder:text-white/40"
               />
 
               <button
                 type="button"
-                onClick={() => setShowPassword(v => !v)}
-                className="flex h-10 w-10 items-center justify-center rounded-lg text-white/50 hover:bg-white/10 hover:text-white"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-white/60"
               >
-                {showPassword ? (
-                  <EyeOff className="h-5 w-5" />
-                ) : (
-                  <Eye className="h-5 w-5" />
-                )}
+                {showPassword ? <EyeOff /> : <Eye />}
               </button>
             </div>
-            <div className="flex items-center justify-end">
-              <button
-                type="button"
-                onClick={() =>
-                  toast.info("Coming soon", {
-                    description:
-                      "This feature is in future development.",
-                  })
-                }
-                className="text-xs text-emerald-300/70 hover:text-emerald-200 transition"
-              >
-                Forgot password?
-              </button>
-            </div>
-            {/* BUTTON */}
+
             <button
               type="submit"
               disabled={loading}
-              className="flex h-14 w-full items-center justify-center gap-3 rounded-2xl bg-emerald-500 text-base font-semibold text-white transition hover:bg-emerald-400 disabled:opacity-60"
+              className="h-14 w-full rounded-2xl bg-emerald-500 text-white font-semibold flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
-                  <LoaderCircle className="h-5 w-5 animate-spin" />
+                  <LoaderCircle className="animate-spin" />
                   Signing in...
                 </>
               ) : (
                 "Sign in"
               )}
             </button>
+
           </form>
 
-          {/* FOOTER */}
           <footer className="mt-6 text-center">
             <p className="text-xs text-white/30">
               Authorized access only
