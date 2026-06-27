@@ -51,7 +51,7 @@ export default function LoginPage() {
 
       if (error || !data.user) {
         toast.dismiss(loadingToast);
-        toast.error("Login failed");
+        toast.error("Login failed. Check your credentials.");
         setLoading(false);
         return;
       }
