@@ -33,21 +33,16 @@ export default function LoginPage() {
 
       if (!response.success) {
         toast.error("Login failed", {
-          description: response.error ?? "Invalid email or password.",
+          description: response.error,
         });
         return;
       }
-
-      if (!response.success) {
-        toast.error("Login failed", {
-          description: response.error ?? "Invalid email or password.",
-        });
-        return;
-      }
-
 
       if (response.mustChangePassword) {
-        toast.success("Password update required");
+        toast.success("Password update required", {
+          description: "Please update your password before continuing.",
+        });
+
         router.replace("/reset-password");
         return;
       }
@@ -63,6 +58,10 @@ export default function LoginPage() {
         router.replace("/scholar");
         return;
       }
+
+      toast.error("Login failed", {
+        description: "Unknown account role.",
+      });
     } catch {
       toast.error("System error", {
         description: "Unable to sign in. Please try again.",
@@ -168,7 +167,7 @@ export default function LoginPage() {
                 onClick={() =>
                   toast.info("Coming soon", {
                     description:
-                      "Password recovery feature is currently under development. Please contact admin if you need access immediately.",
+                      "This feature is in future development.",
                   })
                 }
                 className="text-xs text-emerald-300/70 hover:text-emerald-200 transition"
